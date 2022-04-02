@@ -1,0 +1,18 @@
+{
+  "editor.tabSize": 4,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.extraPaths": [
+    "{$workspaceFolder}/.venv/Lib/site-packages",
+    "{$workspaceFolder}/src"
+  ],
+  "python.autoComplete.extraPaths": [
+    "{$workspaceFolder}/.venv/Lib/site-packages",
+    "{$workspaceFolder}/src"
+  ],
+  "python.formatting.provider": "black",
+  "python.languageServer": "Pylance",
+  "python.linting.flake8Args": ["--max-line-length=88"],
+  "python.linting.flake8Enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.terminal.activateEnvInCurrentTerminal": true
+}

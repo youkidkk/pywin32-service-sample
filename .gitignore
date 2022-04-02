@@ -1,0 +1,7 @@
+/.venv
+/.mypy_cache
+/tmp/**
+/logs/**
+/**/__pycache__
+/**/.ropeproject
+!.gitkeep
