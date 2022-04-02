@@ -10,7 +10,7 @@ import win32service
 import win32serviceutil
 import yaml
 
-from main import Main
+from process import Process
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +23,17 @@ class PyWin32Sample(win32serviceutil.ServiceFramework):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.stop_event = win32event.CreateEvent(None, 0, 0, None)
         socket.setdefaulttimeout(60)
-        self.main_stop_event = Event()
+
+        self.process_stop_event = Event()
+        self.process = Thread(target=Process(self.process_stop_event).run)
 
     def SvcStop(self):
+        logger.info(f"{self._svc_display_name_} を停止します。")
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         win32event.SetEvent(self.stop_event)
-        logger.info(f"{self._svc_display_name_} を停止します。")
-        self.main_stop_event.set()
+        self.process_stop_event.set()
+        self.process.join()
+        logger.info(f"{self._svc_display_name_} を停止しました。")
 
     def SvcDoRun(self):
         logger.info(f"{self._svc_display_name_} を開始します。")
@@ -39,16 +43,13 @@ class PyWin32Sample(win32serviceutil.ServiceFramework):
             servicemanager.PYS_SERVICE_STARTED,
             (self._svc_name_, ""),
         )
-        self.main()
+        self.process.start()
+        logger.info(f"{self._svc_display_name_} を開始しました。")
+        self.loop_until_stop()
 
-    def main(self):
-        main_thread = Thread(target=Main(self.main_stop_event).run)
-        main_thread.start()
-        while not self.main_stop_event.wait(timeout=10):
+    def loop_until_stop(self):
+        while not self.process_stop_event.wait(timeout=10):
             pass
-        main_thread.join()
-        logger.info(f"{self._svc_display_name_} を停止しました。")
-        return
 
 
 if __name__ == "__main__":
@@ -59,8 +60,6 @@ if __name__ == "__main__":
 
         with open("configs/log_conf.yml") as f:
             logging.config.dictConfig(yaml.unsafe_load(f.read()))
-        logger = logging.getLogger(__name__)
-        logger.info(f"cwd: {os.getcwd()}")
 
         servicemanager.Initialize()
         servicemanager.PrepareToHostSingle(PyWin32Sample)
