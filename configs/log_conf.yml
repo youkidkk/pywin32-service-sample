@@ -1,0 +1,34 @@
+version: 1
+formatters:
+  levelAndMessage:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: levelAndMessage
+    stream: ext://sys.stdout
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: levelAndMessage
+    filename: "logs/pywin32_sample.log"
+    maxBytes: 1000000
+    backupCount: 5
+    encoding: "utf-8"
+loggers:
+  __main__:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+  main:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+  child:
+    level: INFO
+    handlers: [console, file]
+    propagate: no
+root:
+  level: INFO
+  handlers: [console]
