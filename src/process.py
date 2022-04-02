@@ -13,11 +13,11 @@ class Process:
         self.stop_event: Event = stop_event
 
     def run(self):
-        logger.info("Process: start.")
+        logger.info("Process: 開始しました。")
 
         while not self.stop_event.wait(timeout=3):
-            logger.info("Process: Running...")
-        logger.info("Process: End.")
+            logger.info("Process: 実行中です。")
+        logger.info("Process: 終了しました。")
 
 
 stop_event = Event()
