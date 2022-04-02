@@ -2,7 +2,6 @@ import logging
 import os
 import socket
 import sys
-import time
 from threading import Event, Thread
 
 import servicemanager
@@ -24,13 +23,13 @@ class PyWin32Sample(win32serviceutil.ServiceFramework):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.stop_event = win32event.CreateEvent(None, 0, 0, None)
         socket.setdefaulttimeout(60)
-        self.stop_requested = False
+        self.main_stop_event = Event()
 
     def SvcStop(self):
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         win32event.SetEvent(self.stop_event)
         logger.info(f"{self._svc_display_name_} を停止します。")
-        self.stop_requested = True
+        self.main_stop_event.set()
 
     def SvcDoRun(self):
         logger.info(f"{self._svc_display_name_} を開始します。")
@@ -43,15 +42,11 @@ class PyWin32Sample(win32serviceutil.ServiceFramework):
         self.main()
 
     def main(self):
-        main_stop_event = Event()
-        main_thread = Thread(target=Main(main_stop_event).run)
+        main_thread = Thread(target=Main(self.main_stop_event).run)
         main_thread.start()
-        while True:
-            if self.stop_requested:
-                main_stop_event.set()
-                main_thread.join()
-                break
-            time.sleep(5)
+        while not self.main_stop_event.wait(timeout=10):
+            pass
+        main_thread.join()
         logger.info(f"{self._svc_display_name_} を停止しました。")
         return
 
