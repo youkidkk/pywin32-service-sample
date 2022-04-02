@@ -27,14 +27,6 @@ class PyWin32Sample(win32serviceutil.ServiceFramework):
         self.process_stop_event = Event()
         self.process = Thread(target=Process(self.process_stop_event).run)
 
-    def SvcStop(self):
-        logger.info(f"{self._svc_display_name_} を停止します。")
-        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
-        win32event.SetEvent(self.stop_event)
-        self.process_stop_event.set()
-        self.process.join()
-        logger.info(f"{self._svc_display_name_} を停止しました。")
-
     def SvcDoRun(self):
         logger.info(f"{self._svc_display_name_} を開始します。")
         self.ReportServiceStatus(win32service.SERVICE_RUNNING)
@@ -46,6 +38,14 @@ class PyWin32Sample(win32serviceutil.ServiceFramework):
         self.process.start()
         logger.info(f"{self._svc_display_name_} を開始しました。")
         self.loop_until_stop()
+
+    def SvcStop(self):
+        logger.info(f"{self._svc_display_name_} を停止します。")
+        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
+        win32event.SetEvent(self.stop_event)
+        self.process_stop_event.set()
+        self.process.join()
+        logger.info(f"{self._svc_display_name_} を停止しました。")
 
     def loop_until_stop(self):
         while not self.process_stop_event.wait(timeout=10):
