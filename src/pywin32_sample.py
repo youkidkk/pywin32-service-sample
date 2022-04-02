@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 class PyWin32Sample(win32serviceutil.ServiceFramework):
     _svc_name_ = "pywin32_sample"
     _svc_display_name_ = "PyWin32 Sample Service"
+    _svc_description_ = "PyWin32 のサンプルサービス。"
 
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
