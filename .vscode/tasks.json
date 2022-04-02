@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "group": "build",
+      "label": "build",
+      "type": "shell",
+      "command": "pipenv",
+      "args": [
+        "run",
+        "pyinstaller",
+        "src/pywin32_sample.py",
+        "--onefile",
+        "--clean",
+        "--hiddenimport",
+        "win32timezone",
+        "--hiddenimport",
+        "win32serviceutil"
+      ]
+    }
+  ]
+}
