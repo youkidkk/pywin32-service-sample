@@ -21,11 +21,7 @@ loggers:
     level: INFO
     handlers: [console, file]
     propagate: no
-  main:
-    level: INFO
-    handlers: [console, file]
-    propagate: no
-  child:
+  process:
     level: INFO
     handlers: [console, file]
     propagate: no
