@@ -12,7 +12,7 @@ pipenv install --dev
 ## ビルド
 
 ```shell
-pipenv run pyinstaller src/src/pywin32_sample.py --onefile --clean --hiddenimport win32timezone --hiddenimport win32serviceutil
+pipenv run pyinstaller src/pywin32_sample.py --onefile --clean --hiddenimport win32timezone --hiddenimport win32serviceutil
 # -> dist 配下にexeファイルが作成される
 ```
 
